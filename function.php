@@ -4,12 +4,6 @@
 
     function query($query){
         global $conn;
-    // ambil data (fecth) dari objek $result
-    // ada 4 langkah
-    // mysqli_fetch_row()       //Mengembalikan array numerik
-    // mysqli_fetch_assoc()     //Mengembalikan array assosiative
-    // mysqli_fetch_array()     //Dapat mengembalikan keduanya
-    // mysqli_fetch_object()    //mengembalikan object
         $result = mysqli_query($conn,$query);
         $rows =[];
         while ( $row = mysqli_fetch_assoc($result)){
@@ -23,6 +17,7 @@ function tambah($data){
     $app = htmlspecialchars($data["app"]);
     $author = htmlspecialchars($data["author"]);
     $link = htmlspecialchars($data["link"]);
+    $tags = htmlspecialchars($data["tagsarea"]);
     $tanggal = date("Y-m-d H:i:s");
     $jenis = $data["jenis"];
 
@@ -33,8 +28,8 @@ function tambah($data){
         return false;
     }
 
-// QUERY INSERT DATA
-    $query = "INSERT INTO datawebsite VALUES (null,'$app','$author','$link','$GAMBAR','$tanggal','$jenis')";
+    // QUERY INSERT DATA
+    $query = "INSERT INTO datawebsite VALUES (null,'$app','$author','$link','$GAMBAR','$tanggal','$jenis','$tags')";
     mysqli_query($conn,$query);
 
     return mysqli_affected_rows($conn);
@@ -93,5 +88,12 @@ function cari($keyword){
             author LIKE '%$keyword%'
             ";
     return query($query);
+}
+
+function addtools($data){
+    $myarray = explode(',',$data);
+    foreach($myarray as $item){
+        echo '<span class="badge bg-primary" style="margin-right:3px;">'.$item.'</span>';
+    }
 }
 ?>

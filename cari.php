@@ -7,7 +7,7 @@ $query = "SELECT * FROM datawebsite
             author LIKE '%$keyword%' OR
             link  LIKE '%$keyword%' OR
             jenis LIKE '%$keyword%' 
-            "; 
+            ORDER BY id desc"; 
 $data = query($query);
 ?>
 <!-- card -->
@@ -21,6 +21,7 @@ $data = query($query);
       <div class="card-body">
         <h5 class="card-title"><?= $d["app"]?></h5>
         <p class="card-text"><?= $d["author"]?></p>
+        <p class="card-text"><?= addtools($d["tools"])?></p>
         <p class="card-text" style="float: right; font-style: italic; color: grey;"><?= $d["jenis"]?></p><br><hr>
       <p class="card-text"><small class="text-muted"><?= $d["tanggal"]?></small></p>
       </div>
