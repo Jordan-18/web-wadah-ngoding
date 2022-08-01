@@ -1,6 +1,6 @@
 <!-- Penghubung database -->
 <?php
-    $conn = mysqli_connect("localhost","root","","ngoding");
+    $conn = mysqli_connect("localhost","root","","wadah_ngoding");
 
     function query($query){
         global $conn;
