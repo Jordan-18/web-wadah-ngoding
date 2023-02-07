@@ -1,17 +1,19 @@
-$(document).ready(function () {
-    // buat event ketika keyword ditulis
-    $('#keyword').on('keyup', function () {
-        // hilangkan tombol cari
+$(document).ready(function(){
+    console.log($('#keyword').val());
+    $('#keyword').on('keyup',function(){
         $('#cari').hide();
-        // memunculkan icon loading 
         $('.loader').show();
-        // sistem load hanya bisa $_GET() versi load
-        //    $('.cont').load('cari.php?keyword=' + $('#keyword').val());
-
-        //$.get()
-        $.get('cari.php?keyword=' + $('#keyword').val(), function (data) {
+        $.get('cari.php?keyword=' + $('#keyword').val(),function(data){
             $('.cont').html(data);
-            // $('.loader').hide();
-        });
+        }); 
     });
+
+    $('#jenis_keyword').on('change', function() {
+            $('#cari').hide();
+            $('.loader').show();
+            $.get('cari.php?keyword=' + $('#jenis_keyword').val(),function(data){
+                $('.cont').html(data);
+            });
+    })
+
 });
