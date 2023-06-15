@@ -7,7 +7,7 @@
     require 'function.php';
     $username = $_SESSION["username"]  ;
     $user_data = query("SELECT * FROM user WHERE username = '$username'");
-    $data_web = query("SELECT * FROM datawebsite");
+    $data_web = query("SELECT * FROM datawebsite ORDER BY id desc");
     $data_web_json = json_encode($data_web);
 
     // insert
