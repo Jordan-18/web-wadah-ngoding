@@ -11,19 +11,33 @@
     <link rel="shortcut icon" href="img/ngo2.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
-    <title>Ngoding Ajalah</title>
+    <title>Keifproject ~Ngoding ajalah</title>
     <script src="js/jquery-3.5.0.min.js"></script>
     <script src="js/main.js"></script>
+    <style>
+        .cont{
+            margin-top:70px !important
+        }
+        @media screen and (max-width: 1000px) {
+            .input-search{
+                width: 100%;
+                margin: 10px 10px 0px 10px;
+            }
+            .cont{
+                margin-top:110px !important
+            }
+        }
+    </style>
     
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark" style="border-bottom: black;">
+<nav class="navbar navbar-dark bg-dark" style="border-bottom: black;position: fixed;top: 0;width: 100%;background-color: white;transition: background-color 1s ease;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);z-index: 1000;">
   <a class="navbar-brand" href="index">
     <img src="img/ngolah.png" width="30" height="30" class="d-inline-block align-top" alt="">
-    Ngoding Ajalah
+    Keifproject ~Ngoding ajalah
   </a>
-  <form class="d-flex">
+  <form class="d-flex input-search">
     <input class="form-control me-2" type="search" name="keyword" type="text" placeholder="Search" aria-label="Search" id="keyword">
     <a class="btn btn-outline-secondary my-2 my-sm-0 m-2" href="login">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">

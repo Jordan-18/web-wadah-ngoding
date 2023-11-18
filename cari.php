@@ -2,13 +2,15 @@
 require 'function.php';
 $keyword = $_GET["keyword"];
 $query = "SELECT * FROM datawebsite
-            WHERE
-            app LIKE '%$keyword%' OR
-            author LIKE '%$keyword%' OR
-            link  LIKE '%$keyword%' OR
-            tools LIKE '%$keyword%' OR
-            jenis LIKE '%$keyword%' 
-            ORDER BY id desc"; 
+            WHERE status = 1 AND 
+            (
+                app LIKE '%$keyword%' OR
+                author LIKE '%$keyword%' OR
+                link  LIKE '%$keyword%' OR
+                tools LIKE '%$keyword%' OR
+                jenis LIKE '%$keyword%'
+            )
+            ORDER BY id desc";
 $data_web = query($query);
 ?>
 <!-- card -->

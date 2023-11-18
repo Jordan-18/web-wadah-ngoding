@@ -253,6 +253,7 @@
                 processing: true,
                 data : data_web,
                 pageLength: 7,
+                order: [[0, 'desc']],
                 fnRowCallback: function(row,data,index,rowIndex){
                     var app_rating = 0
                     if(data.jumlah_rating == 0 && data.user_rating == 0){
