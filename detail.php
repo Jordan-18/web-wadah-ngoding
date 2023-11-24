@@ -132,7 +132,7 @@
 
         </div>
         <div class="tab-pane fade" id="pills-flow" role="tabpanel" aria-labelledby="pills-flow-tab">
-          <?= htmlspecialchars_decode($data_web[0]['flow']); ?>
+          <?= $data_web[0]['flow'] ? htmlspecialchars_decode($data_web[0]['flow']) : 'No Flow'; ?>
         </div>
       </div>
     </div>
