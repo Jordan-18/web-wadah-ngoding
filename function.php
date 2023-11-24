@@ -1,6 +1,7 @@
 <?php
 // Penghubung database 
-$conn = mysqli_connect("45.90.230.191","u1584221_jordan","Surabaya2000","u1584221_wadah");
+// $conn = mysqli_connect("45.90.230.191","u1584221_jordan","Surabaya2000","u1584221_wadah");
+$conn = mysqli_connect("localhost","root","","projects");
 
 function query($query){
     global $conn;
@@ -19,12 +20,16 @@ function tambah($data){
     $author = htmlspecialchars($data["author_add"]);
     $link = htmlspecialchars($data["link_add"]);
     $tags = htmlspecialchars($data["tagsarea_add"]);
+    $deskripsi = htmlspecialchars($data["deskripsi_add"]);
+    $github = htmlspecialchars($data["github_add"]);
+    $flow = htmlspecialchars($data["flow_add"]);
     $tanggal = date("Y-m-d H:i:s");
     $jenis = $data["jenis_add"];
 
-    
     // upload gambar
-    $GAMBAR = upload();
+    $GAMBAR = upload('GAMBAR');
+    $galleries = uploadMultiple('galleries_add');
+
     if( !$GAMBAR ){
         return false;
     }
@@ -42,58 +47,109 @@ function tambah($data){
         '$user_id',
         0,
         0,
+        '$github',
+        '$deskripsi',
+        '$flow',
         1,
         '$tanggal',
         '$tanggal',
-        ''
-        )";
+        null
+    )";
+    
     mysqli_query($conn,$query);
 
+    $induk_id = mysqli_insert_id($conn);
+
+    foreach($galleries as $namaFileBaru){
+        $galleriesQuery = "INSERT INTO galleries VALUES (
+            null,
+            '$induk_id',
+            '$namaFileBaru',
+            '$tanggal',
+            '$tanggal'
+            )";
+        mysqli_query($conn,$galleriesQuery);
+    }
+    
     return mysqli_affected_rows($conn);
 }
 
+function upload($imgname){
 
+    $NAMAFILE = $_FILES[$imgname]['name'];
+    $UKURANFILE = $_FILES[$imgname]['size'];
+    $error = $_FILES[$imgname]['error'];
+    $tmpName =$_FILES[$imgname]['tmp_name'];
 
-function upload(){
-
-    $NAMAFILE = $_FILES['GAMBAR']['name'];
-    $UKURANFILE = $_FILES['GAMBAR']['size'];
-    $error = $_FILES['GAMBAR']['error'];
-    $tmpName =$_FILES['GAMBAR']['tmp_name'];
-
-// cek apakah tidak ada gambar yg di upload 
+    // cek apakah tidak ada gambar yg di upload 
     if($error === 4){
         echo"<script>
             alert('Pilih Gambar terlebih dahulu !');
             </script>";
             return false;
     }
-// cek apa yg di upload gambar apa bukan 
+    // cek apa yg di upload gambar apa bukan 
     $ekstensiGambarvalid =['jpg','png','jpeg','jfif'];
     $ekstensiGambar =explode('.',$NAMAFILE);
     $ekstensiGambar =strtolower(end($ekstensiGambar));
     if( !in_array($ekstensiGambar,$ekstensiGambarvalid)){
         echo"<script>
-        alert('Yang anda Upload bukan gambar yang sesuai');
+            alert('Yang anda Upload bukan gambar yang sesuai');
         </script>";
     }
 
-// cek jika ukuran terlalu besar
+    // cek jika ukuran terlalu besar
     if( $UKURANFILE > 1000000){
         echo"<script>
         alert('Ukuran Gambar terlalu besar');
         </script>";
     return false;
     }
-// generate nama gambar
+    // generate nama gambar
     $namaFileBaru = uniqid();
     $namaFileBaru .='.';
-    $namaFileBaru .=$ekstensiGambar;
+    $namaFileBaru .= $ekstensiGambar;
 
-// lolos pengecekan 
+    // lolos pengecekan 
     move_uploaded_file($tmpName,'img/' . $namaFileBaru);
 
     return $namaFileBaru;
+}
+
+function uploadMultiple($imgname) {
+    $namaFiles = $_FILES[$imgname]['name'];
+    $ukuranFiles = $_FILES[$imgname]['size'];
+    $errors = $_FILES[$imgname]['error'];
+    $tmpNames = $_FILES[$imgname]['tmp_name'];
+
+    $uploadedFiles = [];
+
+    foreach ($namaFiles as $key => $namaFile) {
+        // cek apa yang diupload gambar apa bukan
+        $ekstensiGambarvalid = ['jpg', 'png', 'jpeg', 'jfif'];
+        $ekstensiGambar = explode('.', $namaFile);
+        $ekstensiGambar = strtolower(end($ekstensiGambar));
+        if (!in_array($ekstensiGambar, $ekstensiGambarvalid)) {
+            echo "<script>alert('File ke-" . ($key + 1) . " yang anda upload bukan gambar yang sesuai');</script>";
+        }
+
+        // cek jika ukuran terlalu besar
+        if ($ukuranFiles[$key] > 1000000000) {
+            echo "<script>alert('Ukuran Gambar ke-" . ($key + 1) . " terlalu besar');</script>";
+            return false;
+        }
+
+        // generate nama gambar
+        $namaFileBaru = uniqid() . '.' . $ekstensiGambar;
+
+        // lolos pengecekan
+        move_uploaded_file($tmpNames[$key], 'img/' . $namaFileBaru);
+
+        // tambahkan nama file baru ke array
+        $uploadedFiles[] = $namaFileBaru;
+    }
+
+    return $uploadedFiles;
 }
 
 // sistem Cari 
@@ -152,7 +208,7 @@ function register($data){
 function addtools($data){
     $myarray = explode(',',$data);
     foreach($myarray as $item){
-        echo '<span class="badge bg-primary" style="margin-right:3px;">'.$item.'</span>';
+        echo '<span class="badge bg-primary" style="margin-right:3px;">'.trim($item).'</span>';
     }
 }
 
@@ -167,14 +223,22 @@ function update($data){
     $tanggal = date("Y-m-d H:i:s");
     $jenis = htmlspecialchars($data["jenis"]);
     $GAMBARLAMA = htmlspecialchars($data["GAMBARLAMA"]);
-    $status = (htmlspecialchars($data["status"]) == "on" ? '' : 1);
+    $flow = htmlspecialchars($data["flow"]);
+
+    $status = $data["status"] ? $data["status"] : 'off';
+    $status = ($status == "on" ? '' : 1);
     
-// CEK APAKAH USER PILIH GAMBAR BARU ATAU TIDAK 
- if( $_FILES['GAMBAR']['error'] === 4){
-     $GAMBAR = $GAMBARLAMA;
- }else {
-     $GAMBAR = upload();
- }  
+    // CEK APAKAH USER PILIH GAMBAR BARU ATAU TIDAK 
+    if( $_FILES['GAMBAR']['error'] === 4){
+        $GAMBAR = $GAMBARLAMA;
+    }else {
+        $GAMBAR = upload('GAMBAR');
+    }
+
+    $galleries = [];
+    if(count($_FILES['add_img']['name']) > 1){
+        $galleries = uploadMultiple('add_img');
+    }
 
     $query = "UPDATE datawebsite SET 
         app = '$app',
@@ -184,10 +248,24 @@ function update($data){
         updated_at = '$tanggal',
         jenis = '$jenis',
         tools = '$tags',
+        flow = '$flow',
         status = '$status'
-         
+        
         WHERE id = $id;
-        ";
+    ";
+
+    $induk_id = mysqli_insert_id($conn);
+
+    foreach($galleries as $gallery){
+        $query .= "INSERT INTO galleries VALUES (
+            null,
+            '$induk_id',
+            '$gallery',
+            '$tanggal',
+            '$tanggal'
+        );";
+    }
+
     mysqli_query($conn,$query);
 
     return mysqli_affected_rows($conn);
@@ -196,7 +274,7 @@ function update($data){
 function hapus($id){
     global $conn;
     mysqli_query($conn,"DELETE FROM datawebsite WHERE id = $id");
-
+    mysqli_query($conn,"DELETE FROM galleries WHERE induk_id = $id");
 
     return mysqli_affected_rows($conn);
 }

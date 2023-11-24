@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    console.log($('#keyword').val());
     $('#keyword').on('keyup',function(){
         $('#cari').hide();
         $('.loader').show();

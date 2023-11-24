@@ -51,22 +51,31 @@
 <div class="cont">
   <div class="row row-cols-1 row-cols-md-3 g-4 m-2">
     <?php foreach($data_web as $data) :?>
-    <div class="col">
-      <div class="card">
+      <div class="col">
+        <div class="card">
+          <div class="inner" style="position: relative;">
+            <a href="<?= $data["link"]?>" target="blank">
+              <img style="height: 270px;" src="img/<?= $data["gambar"] ?>" class="card-img-top">
+              <div class="detail-button" style="position: absolute; top: 0; right: 0; padding: 10px; background-color: rgba(255, 255, 255, 0.5); border: 1px solid #fff;">
+                <a href="detail.php?id=<?= $data["id"]?>" class="btn btn-sm" style="background-color:transparent"> 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-search mb-1" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                  </svg>
+                  Detail
+                </a>
+              </div>
+            </a>
+          </div>
 
-        <div class="inner">
-          <a href="<?= $data["link"]?>" target="blank"><img style="height: 270px;" src="img/<?= $data["gambar"] ?>" class="card-img-top"></a>
-        </div>
-
-        <div class="card-body">
-          <h5 class="card-title"><?= $data["app"]?></h5>
-          <p class="card-text"><?= $data["author"]?></p>
-          <p class="card-text"><?= addtools($data["tools"])?></p>
-          <p class="card-text" style="float: right; font-style: italic; color: grey;"><?= $data["jenis"]?></p><br><hr>
-        <p class="card-text"><small class="text-muted"><?= date("F j, Y, g:i a",strtotime($data["tanggal"]))?></small></p>
+          <div class="card-body">
+            <h5 class="card-title"><?= $data["app"]?></h5>
+            <p class="card-text"><?= $data["author"]?></p>
+            <p class="card-text"><?= addtools($data["tools"])?></p>
+            <p class="card-text" style="float: right; font-style: italic; color: grey;"><?= $data["jenis"]?></p><br><hr>
+            <p class="card-text"><small class="text-muted"><?= date("F j, Y, g:i a",strtotime($data["tanggal"]))?></small></p>
+          </div>
         </div>
       </div>
-    </div>
       <?php endforeach;?>
   </div>
 </div>

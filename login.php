@@ -37,12 +37,12 @@
 		if(password_verify($password, $row["password"])){
 			// set session 
 			$_SESSION["login"] = true;
+			$_SESSION["id"] = $row["id"];
 			$_SESSION["username"] = $row["username"];
 			if (isset($_POST['remember'])){
 				// buat cookie
 				setcookie('id',$row['id'],time()+60);
 				setcookie('key',password_hash($row['username'], PASSWORD_DEFAULT),time() + 60);
-
 			}
 			header("Location: dashboard");
 			exit;

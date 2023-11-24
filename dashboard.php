@@ -8,6 +8,14 @@
     $username = $_SESSION["username"]  ;
     $user_data = query("SELECT * FROM user WHERE username = '$username'");
     $data_web = query("SELECT * FROM datawebsite ORDER BY id desc");
+
+    foreach ($data_web as &$data) {
+        $id = $data['id'];
+    
+        $queryGalleries = query("SELECT * FROM galleries WHERE induk_id = $id");
+        $data['galleries'] = $queryGalleries;
+    }
+
     $data_web_json = json_encode($data_web);
 
     // insert
@@ -16,7 +24,7 @@
             echo "
             <script>
                 alert('Data Berhasil Ditambah');
-                document.location.href = 'index';
+                document.location.href = 'dashboard';
             </script>
             ";
         } else {
@@ -65,6 +73,9 @@
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="js/main.js"></script>
+        <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     </head>
     <body id="page-top">
         <nav class="navbar navbar-expand-lg navbar-dark bg-warning fixed-top" id="sideNav">
@@ -94,66 +105,98 @@
             <section class="resume-section" id="tambahdata">
                 <div class="container">
                 <form action="" method="POST" enctype="multipart/form-data">
-                    <div class="col">
-                        <div class="mb-3">
-                            <label for="app" class="form-label">Nama Karya Mu</label>
-                            <input type="hidden" class="form-control" id="user_id_add" aria-describedby="user_id_add" name="user_id_add">
-                            <input type="text" class="form-control" id="app_add" aria-describedby="app_add" name="app_add" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="author" class="form-label">Lalu Namamu siapa ?</label>
-                            <input type="text" class="form-control" id="author_add" aria-describedby="author_add" name="author_add" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="link" class="form-label">Link nya dong....</label>
-                            <input type="text" class="form-control" id="link_add" aria-describedby="link_add" name="link_add" required>
-                        </div>
-                        
-                        <div class="content mb-3">
-                            <div class="col-md-3">
-                            <label for="link" class="form-label">Tags</label>
-                            <div class="input-group">
-                            <input type="text" class="form-control" id="tags" list="datalistOptions" autocomplete="off">
-                            <datalist id="datalistOptions">
-                                        <option value="PHP">
-                                        <option value="Laravel">
-                                        <option value="CodeIgniter">
-                                        <option value="JavaScript">
-                                        <option value="Express">
-                                        <option value="Golang">
-                                        <option value="Mysql">
-                                        <option value="Nosql">
-                            </datalist>
-                            <button type="button" class="btn btn-outline-secondary" onclick="addtags();">Add Tags</button>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="app" class="form-label">Nama Karya Mu</label>
+                                <input type="hidden" class="form-control" id="user_id_add" aria-describedby="user_id_add" name="user_id_add" value="<?= $_SESSION["id"] ?>">
+                                <input type="text" class="form-control" id="app_add" aria-describedby="app_add" name="app_add" required>
                             </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="author" class="form-label">Lalu Namamu siapa ?</label>
+                                <input type="text" class="form-control" id="author_add" aria-describedby="author_add" name="author_add" value="Jordan Istiqlal" required>
                             </div>
+                        </div>
 
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="link" class="form-label">Link nya dong....</label>
+                                <input type="text" class="form-control" id="link_add" aria-describedby="link_add" name="link_add" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="link" class="form-label">Github</label>
+                                <input type="text" class="form-control" id="github_add" aria-describedby="github_add" name="github_add">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="author" class="form-label">Deskripsi</label>
+                                <textarea type="text" class="form-control" id="deskripsi_add" aria-describedby="deskripsi_add" name="deskripsi_add" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group col-md-4">
+                                <label for="inputState">State</label>
+                                <select id="inputState" class="form-control" name="jenis_add" required>
+                                <option selected>Pilih...</option>
+                                <option value="website">Website</option>
+                                <option value="android">Android</option>
+                                <option value="AI">Artificial Intelligence</option>
+                                <option value="Lainnya..">Lainnya....</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mt-3">
+                            <div class="content mb-3">
+                                <label for="link" class="form-label">Tags</label>
+                                <div class="input-group">
+                                <input type="text" class="form-control" id="tags" list="datalistOptions" autocomplete="off">
+                                <datalist id="datalistOptions">
+                                            <option value="PHP">
+                                            <option value="Laravel">
+                                            <option value="CodeIgniter">
+                                            <option value="JavaScript">
+                                            <option value="Express">
+                                            <option value="Golang">
+                                            <option value="Mysql">
+                                            <option value="Nosql">
+                                </datalist>
+                                <button type="button" class="btn btn-outline-secondary" onclick="addtags();">Add Tags</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9 mt-4">
                             <textarea class="form-control mt-3" id="tagsarea_add" name="tagsarea_add" placeholder="Tags Area" readonly="" required></textarea>
                         </div>
 
-                    <!-- pilihan app -->
-                    <div class="form-group col-md-4">
-                        <label for="inputState">State</label>
-                        <select id="inputState" class="form-control" name="jenis_add" required>
-                        <option selected>Pilih...</option>
-                        <option value="website">Website</option>
-                        <option value="android">Android</option>
-                        <option value="AI">Artificial Intelligence</option>
-                        <option value="Lainnya..">Lainnya....</option>
-                        </select>
-                    </div>
-                    
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="GAMBAR" class="form-label">Screenshot App kamu ya</label>
+                                <input type="file" class="form-control"  name="GAMBAR" id="GAMBAR" required>
+                            </div>
+                        </div>
 
-                    <!-- pilihan app -->
-                    <div class="mb-3">
-                        <label for="GAMBAR" class="form-label">Screenshot App kamu ya</label>
-                        <input type="file" class="form-control"  name="GAMBAR" id="GAMBAR" required>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="galleries_add" class="form-label">Screenshot Pendukung</label>
+                                <input type="file" class="form-control"  name="galleries_add[]" id="galleries_add" multiple>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="mb-3" id="flow_area">
+                                <label for="flow_add" class="form-label">Flow</label>
+                                <textarea class="form-control" name="flow_add" id="flow_add"></textarea>
+                            </div>
                         </div>
                     </div>
-                
-                
 
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="onCancel();">Batal</button>
@@ -177,59 +220,92 @@
             <form action="" method="POST" enctype ="multipart/form-data">
                 <div class="modal-body">
                     <div class="container">
-                            <img id="img_lama">
-                            <input type="hidden" id="id_app" name="id_app">
-                            <div class="mb-3 row">
-                                <label for="app" class="col-sm-2 col-form-label">Nama App</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control-plaintext" id="app" name="app">
-                                </div>
+                        <img id="img_lama">
+                        <div class="col-sm-12 mt-2" style="overflow-x: auto; white-space: nowrap;" id="add_img_edit"> </div>
+                        <input type="hidden" id="id_app" name="id_app">
+                        <div class="mb-3 row">
+                            <label for="app" class="col-sm-2 col-form-label">Nama App</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="app" name="app">
                             </div>
-                            <div class="mb-3 row">
-                                <label for="author" class="col-sm-2 col-form-label">Creator</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control-plaintext" id="author" name="author">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="author" class="col-sm-2 col-form-label">Creator</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="author" name="author">
                             </div>
-                            <div class="mb-3 row">
-                                <label for="jenis" class="col-sm-2 col-form-label">Jenis</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control-plaintext" id="jenis" name="jenis">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="jenis" class="col-sm-2 col-form-label">Jenis</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="jenis" name="jenis">
                             </div>
-                            <div class="mb-3 row">
-                                <label for="link" class="col-sm-2 col-form-label">Link</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control-plaintext" id="link" name="link">
-                                </div>
+                        </div>
+                        <!-- add -->
+                        <div class="mb-3 row">
+                            <label for="deskripsi" class="col-sm-2 col-form-label">Deskripsi</label>
+                            <div class="col-sm-10">
+                                <textarea type="text" class="form-control-plaintext" id="deskripsi" name="deskripsi"></textarea>
                             </div>
-                            <div class="mb-3 row">
-                                <label for="tools" class="col-sm-2 col-form-label">Tools</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control-plaintext" id="tools" name="tagsarea">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="github" class="col-sm-2 col-form-label">Github link</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="github" name="github">
                             </div>
-                            <div class="mb-3 row" hidden>
-                                <label for="gambar" class="col-sm-2 col-form-label">Gambar Lama</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control-plaintext" id="gambarlama" name="GAMBARLAMA">
-                                </div>
+                        </div>
+                        <!-- add -->
+                        <div class="mb-3 row">
+                            <label for="link" class="col-sm-2 col-form-label">Link</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="link" name="link">
                             </div>
-                            <div class="mb-3 row">
-                                <label for="gambar" class="col-sm-2 col-form-label">Gambar</label>
-                                <div class="col-sm-10">
-                                    <input type="file" class="form-control-plaintext" id="GAMBAR" name="GAMBAR">
-                                </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="tools" class="col-sm-2 col-form-label">Tools</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="tools" name="tagsarea">
                             </div>
-                            <div class="mb-3 row">
-                                <label for="status" class="col-sm-2 col-form-label">Status</label>
-                                <div class="col-sm-10">
-                                    <input type="checkbox" class="form-check-input" id="status" name="status">
-                                    <label class="form-check-label" for="status">
-                                        Hide
-                                    </label>
-                                </div>
+                        </div>
+                        <div class="mb-3 row" hidden>
+                            <label for="gambar" class="col-sm-2 col-form-label">Gambar Lama</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="gambarlama" name="GAMBARLAMA">
                             </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="gambar" class="col-sm-2 col-form-label">Gambar</label>
+                            <div class="col-sm-10">
+                                <input type="file" class="form-control-plaintext" id="GAMBAR" name="GAMBAR">
+                            </div>
+                        </div>
+                        <!-- added -->
+                        <div class="mb-3 row">
+                            <label for="add_img" class="col-sm-2 col-form-label">Additional Image</label>
+                            <div class="col-sm-10">
+                                <input type="file" class="form-control-plaintext" id="add_img" name="add_img[]" multiple>
+                            </div>
+                        </div>
+                        <!--  -->
+
+                        <div class="mb-3 row">
+                            <label for="status" class="col-sm-2 col-form-label">Status</label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" class="form-check-input" id="status" name="status">
+                                <label class="form-check-label" for="status">
+                                    Hide
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- add new -->
+                        <div class="mb-3 row">
+                            <label for="flow" class="col-sm-2 col-form-label">Flow</label>
+                            <div class="col-sm-10">
+                                <textarea type="file" class="form-control-plaintext" id="flow" name="flow"></textarea>
+                            </div>
+                        </div>
+                        <!--  -->
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -249,11 +325,11 @@
         {
             var data_web = <?= $data_web_json; ?>;
             
-          $('#table_project').DataTable({
+            $('#table_project').DataTable({
                 processing: true,
                 data : data_web,
                 pageLength: 7,
-                order: [[0, 'desc']],
+                order: [[0, 'asc']],
                 fnRowCallback: function(row,data,index,rowIndex){
                     var app_rating = 0
                     if(data.jumlah_rating == 0 && data.user_rating == 0){
@@ -316,13 +392,19 @@
                             data-tools="${data.tools}"
                             data-status="${data.status}"
                             data-link="${data.link}"
+                            data-deskripsi="${data.deskripsi}"
+                            data-github_url="${data.github_url}"
+                            data-flow="${data.flow}"
+                            data-galleries="${btoa(JSON.stringify(data.galleries))}"
                             onclick="onEdit(this)">
                                 Edit
                         </button>
                     `)
                 },
                 columns: [
-                    {data: 'id', name: 'id', width:'5%', title: "id"},
+                    { data: null, orderable: true, searchable: false, render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }},
                     {data: 'app', name: 'app', title: "App Name"},
                     {data: 'author', name: 'author', title: "Creator"},
                     {data: 'tanggal', name: 'tanggal', title: "Dibuat"},
@@ -330,18 +412,13 @@
                     {data: 'jumlah_rating', name: 'jumlah_rating', title: "Rating"},
                     {data: 'status', name: 'status', title: "status"},
                     {data: 'user_id', name: 'user_id', title: "Action"},
-                    // {data: 'tools', name: 'tools', title: "tools"},
-                    // {data: 'link', name: 'link', title: "link"},
-                    // {data: 'gambar', name: 'gambar', title: "gambar"},
-                    // {data: 'user_rating', name: 'user_rating', title: "user_rating"},
-                    // {data: 'created_at', name: 'created_at', title: "created_at"},
-                    // {data: 'updated_at', name: 'updated_at', title: "updated_at"},
-                    // {data: 'deleted_at', name: 'updated_at', title: "updated_at"}
                 ],columnDefs: [{
                     "defaultContent": "-",
                     "targets": "_all"
                 }]
             });
+
+            ClassicEditor.create(document.querySelector('#flow_add'))
         });
 
         onEdit = (el) => {
@@ -353,7 +430,9 @@
             $('#tools').val(hasil.tools)
             $('#link').val(hasil.link)
             $('#id_app').val(hasil.data_id)
+            $('#deskripsi').val(hasil.deskripsi)
             $('#gambarlama').val(hasil.gambar)
+            $('#github').val(hasil.github_url)
             $('#img_lama').replaceWith(`
                 <img 
                     id="img_lama"
@@ -370,6 +449,21 @@
                     ">`)
             document.getElementById('status').checked= false
             if(hasil.status != 1){document.getElementById('status').checked= true}
+
+            const galleries = JSON.parse(atob(hasil.galleries));
+
+            $('#flow_img_edit').empty()
+            $('#add_img_edit').empty()
+
+            ClassicEditor.create(document.querySelector('#flow')).then(editor => {
+                editor.setData(hasil.flow);
+            });
+
+            $.each(galleries, function (key, value) {
+                $('#add_img_edit').append(`
+                    <img src="img/${value.galleries_img}" class="img-thumbnail" style="max-width: 200px; max-height: 200px">
+                `)
+            })
 
             $('#ModalDataEdit').modal('show')
         }
