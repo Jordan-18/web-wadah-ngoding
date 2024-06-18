@@ -1,6 +1,6 @@
 <?php
 // Penghubung database 
-$conn = mysqli_connect("45.90.230.191","u1584221_jordan","Surabaya2000","u1584221_wadah");
+$conn = mysqli_connect("127.0.0.1","u1584221_jordan","Surabaya2000","u1584221_wadah");
 // $conn = mysqli_connect("localhost","root","","projects");
 
 function query($query){
