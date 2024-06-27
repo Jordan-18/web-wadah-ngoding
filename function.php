@@ -1,7 +1,20 @@
 <?php
+
+use Dotenv\Dotenv;
+
+require 'vendor/autoload.php';
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$getenv = $dotenv->load();
+
+$dbHost = $getenv['DB_HOST'];
+$dbUser = $getenv['DB_USER'];
+$dbPass = $getenv['DB_PASS'];
+$dbName = $getenv['DB_NAME'];
+
 // Penghubung database 
-$conn = mysqli_connect("127.0.0.1","u1584221_jordan","Surabaya2000","u1584221_wadah");
-// $conn = mysqli_connect("localhost","root","","projects");
+$conn = mysqli_connect($dbHost, $dbUser, $dbPass, $dbName);
+// $conn = mysqli_connect("45.143.81.236","u1584221_jordan","Surabaya2000","u1584221_wadah");
 
 function query($query){
     global $conn;

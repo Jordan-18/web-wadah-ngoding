@@ -15,4 +15,7 @@ $(document).ready(function(){
             });
     })
 
+    $('.list-item').on('click', function() {
+        console.log('test');
+    })
 });
