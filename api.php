@@ -15,10 +15,10 @@
         foreach($data_web as $key=>$value){
             $d1 = array(
                 'project' => $value['app'],
-                'team' => $value['author'],
+                'team' => explode(", ",$value['author']),
                 'link' => $value['link'],
                 'img' => $protocol.$host.'/img/'.$value['gambar'],
-                'tools' => $value['tools'],
+                'tools' => explode(", ",$value['tools']),
                 'type' => $value['jenis'],
                 'date' => $value['tanggal'],
             );

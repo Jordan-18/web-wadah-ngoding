@@ -12,7 +12,7 @@
     <link rel="shortcut icon" href="img/ngo2.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
-    <title>Keifproject ~Ngoding ajalah</title>
+    <title>Keifproject ~Royunghonam</title>
     <script src="js/jquery-3.5.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
@@ -50,11 +50,24 @@
 <nav class="navbar navbar-dark bg-dark" style="border-bottom: black;position: fixed;top: 0;width: 100%;background-color: white;transition: background-color 1s ease;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);z-index: 1000;">
   <a class="navbar-brand" href="index">
     <img src="img/ngolah.png" width="30" height="30" class="d-inline-block align-top" alt="">
-    Keifproject ~Ngoding ajalah
+    Keifproject ~Royunghonam
   </a>
   <form class="d-flex input-search">
     <div class="input-group mb-1">
-      <input class="form-control me-2 dropdown-toggle" autocomplete="off" type="search" name="keyword" type="text" placeholder="Search" data-bs-toggle="dropdown" aria-label="Search" id="keyword">
+      
+      <input class="form-control dropdown-toggle" autocomplete="off" type="search" name="keyword" type="text" placeholder="Search" data-bs-toggle="dropdown" aria-label="Search" id="keyword">
+
+      <button 
+        type="button" 
+        class="btn btn-outline-secondary btn-clear" 
+        style="border-radius: 0px 5px 5px 0px; "
+        onclick="document.getElementById('keyword').value = ''; searchBadge('');"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
+
       <ul class="dropdown-menu dropdown-menu-static" id="dropdown-filter" hidden></ul>
       <a class="btn btn-outline-secondary my-2 my-sm-0 m-2" href="login">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
@@ -69,18 +82,19 @@
 <div class="cont">
   <div class="row g-0 m-2">
       <div class="label"><strong>Total:</strong> <span id="total">10</span></div>
-      <div>
+      <div hidden>
         <strong class="badges-container">Spesific: <span id="badges-tech"></span></strong>
       </div>
   </div>
-  <hr>
+
   <div class="row row-cols-1 row-cols-md-3 g-2 m-2">
     <?php foreach($data_web as $data) :?>
       <div class="col">
         <div class="card">
           <div class="inner" style="position: relative;">
             <a href="<?= $data["link"]?>" target="blank">
-              <img style="height: 270px;" src="img/<?= $data["gambar"] ?>" class="card-img-top">
+              <!-- <img style="height: 270px;" src="img/<?= $data["gambar"] ?>" class="card-img-top"> -->
+              <img style="height: 270px;" src="img/<?= htmlspecialchars($data['gambar'], ENT_QUOTES, 'UTF-8') ?>" class="card-img-top">
               <div class="detail-button" style="position: absolute; top: 0; right: 0; padding: 10px; background-color: rgba(255, 255, 255, 0.5); border: 1px solid #fff;">
                 <a href="detail.php?id=<?= $data["id"]?>" class="btn btn-sm" style="background-color:transparent"> 
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-search mb-1" viewBox="0 0 16 16">
@@ -95,7 +109,16 @@
           <div class="card-body">
             <h5 class="card-title"><?= $data["app"]?></h5>
             <p class="card-text"><?= $data["author"]?></p>
-            <p class="card-text"><?= addtools($data["tools"])?></p>
+            <!-- <p class="card-text"><?= addtools($data["tools"])?></p> -->
+            <p class="card-text">
+              <?php
+                $myarray = explode(',',$data["tools"]);
+                foreach($myarray as $item){
+                  $trimmed = trim($item);
+                  echo '<span class="badge bg-primary badge-tools" style="margin-right:3px;" onclick="searchBadge(\'' . htmlspecialchars($trimmed, ENT_QUOTES) . '\')">'.$trimmed.'</span>';
+                }
+              ?>
+            </p>
             <p class="card-text" style="float: right; font-style: italic; color: grey;"><?= $data["jenis"]?></p><br><hr>
             <p class="card-text"><small class="text-muted"><?= date("F j, Y, g:i a",strtotime($data["tanggal"]))?></small></p>
           </div>
@@ -118,7 +141,8 @@
     
     const authorCounts = data_web.map(data => data.author).flatMap(authors => authors.split(',')).map(author => author.trim()).reduce((counts, author) => { counts[author] = (counts[author] || 0) + 1;return counts;}, {});
     const toolCounts = data_web.map(data => data.tools).flatMap(tools => tools.split(',')).map(tool => tool.trim()).reduce((counts, tool) => { counts[tool] = (counts[tool] || 0) + 1;return counts;}, {});
-    addbadge({authors: authorCounts,tools : toolCounts})
+
+    addbadge({authors: authorCounts, tools : toolCounts})
     
     // ####### pending feature
     var filter = []
@@ -212,11 +236,43 @@
     const badgeTech = $('#badges-tech')
     let added = ``
     Object.keys(tools).forEach(key => {
-      added += `<span class="badge bg-secondary text-dark" style="margin-right:5px;white-space: nowrap;">${key} <span style="margin-left:5px;color: white">${tools[key]}</span></span>`
+      added += `
+        <span 
+         class="badge bg-secondary text-white text-sm-center badge-tools" 
+         style="margin-right:5px;white-space: nowrap;"
+         onclick="searchBadge('${key}')"
+        >
+          ${key} 
+          <span 
+            style="margin-left:5px;color: white"
+          >
+            <strong>
+              ${tools[key]}
+            </strong>
+          </span>
+        </span>
+      `
     })
 
     badgeTech.append(added)
   }
+
+  const searchBadge = (value) => {
+    $('#keyword').val(value)
+    $('#keyword').keyup()
+  }
 </script>
 </body>
 </html>
+
+<style>
+  .badge-tools{
+    pointer-events: all;
+    cursor: pointer;
+  }
+
+  .btn-clear:hover {
+    background-color: rgb(246, 42, 42);
+    color: #fff;
+  }
+</style>
